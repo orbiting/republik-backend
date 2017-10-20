@@ -14,6 +14,7 @@ type RootQuerys {
   publicUser(id: ID!): PublicUser
   discussions: [Discussion!]!
   discussion(id: ID!): Discussion
+  comment(id: ID!): Comment
 }
 
 type RootMutations {
@@ -261,7 +262,7 @@ type Comment {
   discussion: Discussion!
   id: ID!
   parent: Comment
-  comments: CommentConnection!
+  comments(orderBy: OrderDirection, after: String, first: Int): CommentConnection!
   # maybe becomes mdast/JSON later
   content: String!
   upVotes: Int!
