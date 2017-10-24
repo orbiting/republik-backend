@@ -13,6 +13,19 @@ module.exports = {
   userCanEdit: ({ userId }, args, { user }) =>
     userId === user.id,
 
+  comments: async ({ id }, args, { pgdb }) => {
+    // TODO: Honor these options
+    // const { orderBy, after, take } = args
+
+    const comments = await pgdb.public.comments.find({ parentId: id })
+
+    return {
+      totalCount: comments.length,
+      pageInfo: {hasNextPage: false},
+      nodes: comments
+    }
+  },
+
   userVote: ({ votes }, args, { user }) => {
     const userVote = votes.find(v => v.userId === user.id)
     if (userVote) {
