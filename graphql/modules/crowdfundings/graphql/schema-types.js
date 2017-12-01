@@ -7,6 +7,7 @@ extend type User {
   pledges: [Pledge!]!
   memberships: [Membership!]!
   testimonial: Testimonial
+  paymentSource: PaymentSource
 }
 
 type Crowdfunding {
@@ -36,6 +37,7 @@ type Package {
   id: ID!
   name: String!
   options: [PackageOption!]!
+  paymentMethods: [PaymentMethod!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -81,12 +83,15 @@ type Membership {
   id: ID!
   type: MembershipType!
   pledge: Pledge!
+  # createdAt desc
+  payments: [Payment]!
   voucherCode: String
   reducedPrice: Boolean!
   claimerName: String
   sequenceNumber: Int
   active: Boolean!
   renew: Boolean!
+  # createdAt desc
   periods: [MembershipPeriod]!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -133,7 +138,7 @@ type Pledge {
   status: PledgeStatus!
   total: Int!
   donation: Int!
-  payments: [PledgePayment!]!
+  payments: [Payments!]!
   user: User!
   reason: String
   memberships: [Membership!]!
@@ -177,8 +182,9 @@ enum PaymentStatus {
   WAITING_FOR_REFUND
   REFUNDED
   CANCELLED
+  FAILED
 }
-type PledgePayment {
+type Payment {
   id: ID!
   method: PaymentMethod!
   paperInvoice: Boolean!
@@ -194,10 +200,22 @@ type PledgePayment {
   remindersSentAt: [DateTime!]
   createdAt: DateTime!
   updatedAt: DateTime!
+  # error by the psp
+  error: String
 }
 
-type PledgePayments {
-  items: [PledgePayment!]!
-  count: Int!
+
+type PaymentSource {
+  method: PaymentMethod!
+  expire: Date!
+  # cc: last4
+  identifier: String!
 }
+
+#ReactivateMembershipResponse {
+#  requiresPaymentSource: [PaymentMethod!]
+#  paymentError: String
+#
+#  membership: Membership
+#}
 `

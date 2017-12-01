@@ -18,5 +18,14 @@ type mutations {
   payPledge(pledgePayment: PledgePaymentInput): PledgeResponse!
   reclaimPledge(pledgeId: ID!): Boolean!
   claimMembership(voucherCode: String!): Boolean!
+
+  submitPaymentSource(method: PaymentMethod, sourceId: String!, pspPayload: String): PaymentSource!
+  cancelMembership(id: ID!, reason: String): Membership!
+
+  #reactivateMembership(id: ID!): ReactivateMembershipResponse!
+
+  # throws if paymentSource is required
+  # throws if charge is impossible
+  reactivateMembership(id: ID!): Membership!
 }
 `
