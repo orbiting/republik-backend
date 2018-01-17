@@ -26,9 +26,8 @@ module.exports.run = () => {
   const signInHooks = [
     async (userId, isNew, pgdb) =>
       sendPendingPledgeConfirmations(userId, pgdb, t),
-    async (userId, isNew, pgdb) => {
+    async (userId, isNew, pgdb) =>
       isNew && updateUserOnMailchimp({userId, pgdb, isNew})
-    }
   ]
 
   const createGraphQLContext = (defaultContext) => ({
