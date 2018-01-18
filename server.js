@@ -10,7 +10,7 @@ const { updateUserOnMailchimp } = require('@orbiting/backend-modules-mail')
 const { express: { assets } } = require('@orbiting/backend-modules-assets')
 
 module.exports.run = () => {
-  console.log(process.env)
+  console.log(process.env.STRIPE_PLATFORM)
   require('./lib/slackGreeter')
   const localModule = require('./graphql')
   const executableSchema = makeExecutableSchema(merge(localModule, [documents, redirections]))
