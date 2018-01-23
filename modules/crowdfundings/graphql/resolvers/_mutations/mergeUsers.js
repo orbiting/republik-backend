@@ -140,12 +140,7 @@ module.exports = async (_, args, context) => {
 
     try {
       await unsubscribeEmail({ email: sourceUser.email })
-      await enforceSubscriptions({
-        pgdb,
-        userId: targetUserId,
-        isNew: true,
-        subscribeToEditorialNewsletters: true
-      })
+      await enforceSubscriptions({ pgdb, userId: targetUserId })
     } catch (_e) {
       logger.error('newsletter subscription changes failed in mergeUsers!', _e)
     }
