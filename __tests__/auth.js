@@ -9,8 +9,8 @@ const LOGIN_USER_MUTATION = `
 `
 
 const AUTHORIZE_SESSION_MUTATION = `
-  mutation authorizeSession($email: String!, $token: String!) {
-    authorizeSession(email: $email, token: $token)
+  mutation authorizeSession($email: String!, $tokens: [SessionToken!]!) {
+    authorizeSession(email: $email, tokens: $tokens)
   }
 `
 
@@ -48,7 +48,7 @@ const signIn = async ({ user, context }) => {
     query: AUTHORIZE_SESSION_MUTATION,
     variables: {
       email,
-      token
+      tokens: [{ type: 'EMAIL_TOKEN', payload: token }]
     }
   })
 
