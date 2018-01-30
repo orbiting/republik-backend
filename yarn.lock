@@ -15,6 +15,31 @@
     sharp "^0.19.0"
     stream-to-array "^2.3.0"
 
+"@orbiting/backend-modules-auth@^3.0.8":
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/@orbiting/backend-modules-auth/-/backend-modules-auth-3.0.8.tgz#fa1d4ab4271e03fbcc5f684bb09a7565eda750ee"
+  dependencies:
+    "@orbiting/backend-modules-mail" "^2.0.0"
+    "@orbiting/backend-modules-translate" "^0.0.0"
+    apollo-modules-node "^0.1.4"
+    check-env "^1.3.0"
+    connect-pg-simple "^3.1.2"
+    country-emoji "^1.2.0"
+    debug "^3.1.0"
+    email-validator "^1.1.1"
+    export-files "^2.1.1"
+    express-session "^1.15.6"
+    geoip-database "^1.0.11"
+    is-uuid "^1.0.2"
+    kraut "^0.1.1"
+    maxmind "^2.4.0"
+    passport "^0.4.0"
+    pogi "^2.5.5"
+    querystring "^0.2.0"
+    rw "^1.3.3"
+    useragent "^2.2.1"
+    uuid "^3.1.0"
+
 "@orbiting/backend-modules-auth@^3.0.9":
   version "3.0.9"
   resolved "https://registry.yarnpkg.com/@orbiting/backend-modules-auth/-/backend-modules-auth-3.0.9.tgz#fbb92323ed80cf044bdd917c561bf143fbaa21cd"
