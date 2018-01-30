@@ -1,4 +1,3 @@
-const crypto = require('crypto')
 const {
   ensureSignedIn, checkUsername, transformUser
 } = require('@orbiting/backend-modules-auth')
@@ -12,18 +11,19 @@ const { Redirections: {
   delete: deleteRedirection
 } } = require('@orbiting/backend-modules-redirections')
 
-const convertImage = require('../../../lib/convertImage')
-const uploadExoscale = require('../../../lib/uploadExoscale')
+const { lib: { upload: { uploadPortrait } } } = require('@orbiting/backend-modules-assets')
 const ensureStringLength = require('../../../lib/ensureStringLength')
-
-const {
-  ASSETS_BASE_URL,
-  S3BUCKET
-} = process.env
 
 const MAX_STATEMENT_LENGTH = 140
 const MAX_BIOGRAPHY_LENGTH = 2000
-const MAX_PUBLIC_KEY_LENGTH = 10000 // 4k public key is 3114 chars
+
+// a resonable 4k key is around 3k to 10k chars (radix64 data + armour)
+// - however key file can contain meta data
+// - some people already have 8k keys
+// - a key will also need to pass getKeyId before we store it
+// therefore lets use a way too high limit
+const MAX_PUBLIC_KEY_LENGTH = 524288 // 0.5mb
+
 const MAX_PUBLIC_URL_LENGTH = 2048
 const MAX_TWITTER_HANDLE_LENGTH = 15
 const MAX_FACEBOOK_ID_LENGTH = 64 // (can also be something like profile.php?id=xxxxxxxxxxxxxxx)
@@ -31,14 +31,6 @@ const MAX_PHONE_NUMBER_NOTE_LENGTH = 140
 const MAX_PHONE_NUMBER_LENGTH = 20 // 20 (15 digits but let's give 5 spaces for formatting, e.g. 0049 XXX XX XX XX XX)
 const MAX_FIRSTNAME_LENGTH = 32
 const MAX_LASTNAME_LENGTH = 32
-
-const PORTRAIT_FOLDER = 'portraits'
-
-const {
-  IMAGE_ORIGINAL_SUFFIX,
-  IMAGE_SMALL_SUFFIX,
-  IMAGE_SHARE_SUFFIX
-} = convertImage
 
 const createEnsureStringLengthForProfile = (values, t) => (key, translationKey, max, min = 0) =>
   ensureStringLength(
@@ -95,10 +87,6 @@ module.exports = async (_, args, context) => {
     'statement'
   ]
 
-  let portraitUrl = portrait === null
-    ? null
-    : undefined
-
   if (
     (isListed && !me._raw.isListed) ||
     (args.hasPublicProfile && !me.hasPublicProfile)
@@ -124,47 +112,12 @@ module.exports = async (_, args, context) => {
     }
   }
 
+  let portraitUrl = portrait === null
+    ? null
+    : undefined
+
   if (portrait) {
-    const inputBuffer = Buffer.from(portrait, 'base64')
-
-    const portaitBasePath = [
-      `/${PORTRAIT_FOLDER}/`,
-      // always a new path—cache busters!
-      crypto.createHash('md5').update(portrait).digest('hex')
-    ].join('')
-
-    // IMAGE_SMALL_SUFFIX for cf compat
-    portraitUrl = `${ASSETS_BASE_URL}${portaitBasePath}${IMAGE_SMALL_SUFFIX}`
-
-    await Promise.all([
-      convertImage.toJPEG(inputBuffer)
-        .then((data) => {
-          return uploadExoscale({
-            stream: data,
-            path: `${portaitBasePath}${IMAGE_ORIGINAL_SUFFIX}`,
-            mimeType: 'image/jpeg',
-            bucket: S3BUCKET
-          })
-        }),
-      convertImage.toSmallBW(inputBuffer)
-        .then((data) => {
-          return uploadExoscale({
-            stream: data,
-            path: `${portaitBasePath}${IMAGE_SMALL_SUFFIX}`,
-            mimeType: 'image/jpeg',
-            bucket: S3BUCKET
-          })
-        }),
-      convertImage.toShare(inputBuffer)
-        .then((data) => {
-          return uploadExoscale({
-            stream: data,
-            path: `${portaitBasePath}${IMAGE_SHARE_SUFFIX}`,
-            mimeType: 'image/jpeg',
-            bucket: S3BUCKET
-          })
-        })
-    ])
+    portraitUrl = await uploadPortrait(portrait)
   }
 
   if (username !== undefined && username !== null) {
