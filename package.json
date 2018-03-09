@@ -17,7 +17,7 @@
     "@orbiting/backend-modules-scalars": "^0.0.6",
     "@orbiting/backend-modules-scripts": "^1.0.1",
     "@orbiting/backend-modules-translate": "^0.0.0",
-    "@slack/client": "^3.15.0",
+    "@slack/client": "^4.0.0",
     "apollo-modules-node": "^0.1.4",
     "d3-array": "^1.2.1",
     "d3-dsv": "^1.0.8",
